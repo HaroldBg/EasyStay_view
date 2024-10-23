@@ -127,14 +127,7 @@ const getBadge = (status) => {
     >
       Rechercher
     </CButton>
-    <CButton
-      color="dark"
-      square
-      size="md"
-      class="mx-1"
-    >
-       Ajouter
-    </CButton>
+    <router-link :to="{name: 'Creer Réservations'}" class="btn btn-dark  mx-1">Ajouter chambre</router-link>
 
   </div>
 

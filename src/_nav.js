@@ -15,7 +15,8 @@ export default [
         component: 'CNavItem',
         name: 'Chambres',
         to: '/chambre/chambres',
-      },{
+      },
+      {
         component: 'CNavItem',
         name: 'Réservation',
         to: '/chambre/reservation',

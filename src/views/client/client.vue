@@ -116,14 +116,7 @@ const items = [
     >
       Rechercher
     </CButton>
-    <CButton
-      color="dark"
-      square
-      size="md"
-      class="mx-1"
-    >
-       Ajouter
-    </CButton>
+    <router-link :to="{name: 'Créer Client'}" class="btn btn-dark  mx-1">Ajouter client</router-link>
   </div>
   <div class="mt-4">
     <CCard class="mb-4">

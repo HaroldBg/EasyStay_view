@@ -35,11 +35,20 @@ const routes = [
             path: '/chambre/chambres',
             name: 'Chambres',
             component: () => import('@/views/chambre/Chambres.vue'),
+          },{
+            path: '/chambre/chambres/create',
+            name: 'Chambres.create',
+            component: () => import('@/views/chambre/CreateChambres.vue'),
           },
           {
             path: '/chambre/reservation',
             name: 'Réservations',
             component: () => import('@/views/chambre/reservation.vue'),
+          },
+          {
+            path: '/chambre/reservation/create',
+            name: 'Creer Réservations',
+            component: () => import('@/views/chambre/CreateReservation.vue'),
           },
         ],
       },{
@@ -53,6 +62,16 @@ const routes = [
             /* webpackChunkName: "dashboard" */ '@/views/client/client.vue'
             ),
       },{
+        path: '/clients/create',
+        name: 'Créer Client',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboard" */ '@/views/client/CreateClient.vue'
+            ),
+      },{
         path: '/employes',
         name: 'Employés',
         // route level code-splitting
@@ -63,6 +82,17 @@ const routes = [
             /* webpackChunkName: "dashboard" */ '@/views/client/Employe.vue'
             ),
       },{
+        path: '/employes/create',
+        name: 'Creer Réceptionniste',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboard" */ '@/views/client/Employe.vue'
+            ),
+      },
+      {
         path: '/factures',
         name: 'Factures',
         // route level code-splitting
