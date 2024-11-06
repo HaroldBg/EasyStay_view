@@ -2,9 +2,12 @@
 
 import {CForm, CFormSelect} from "@coreui/vue/dist/esm/components/form";
 import {CCard} from "@coreui/vue/dist/esm/components/card";
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 import { startOfDay, isBefore,addDays } from 'date-fns';
 import { useToast } from 'vue-toastification';
+import {useRouter} from "vue-router";
+// Access router instance
+const router = useRouter();
 
 const toast = useToast();
 const  room = {
@@ -37,9 +40,21 @@ const isDateDisabled = (date) => {
 
 const dateDep = ref();
 const dayoff = addDays(today,1);
+// Fonction pour désactiver les dates avant date_deb pour date_fin (date de départ)
 const isDateDepDisabled = (date) => {
-  return isBefore(date, dayoff); // Désactive les dates avant aujourd'hui
+  // If date_deb is set, disable all dates before it for date_fin
+  return formData.value.date_deb ? isBefore(date, addDays(new Date(formData.value.date_deb), 0)) : isBefore(date, today);
 };
+
+// Watch formData.date_deb and reset formData.date_fin if it becomes invalid
+watch(
+  () => formData.value.date_deb,
+  (newDate) => {
+    if (formData.value.date_fin && isBefore(new Date(formData.value.date_fin), addDays(new Date(newDate), 1))) {
+      formData.value.date_fin = ''; // Reset date_fin if it's before the valid range
+    }
+  }
+);
 const types = [
   'Chambre Simple',
   'Chambre double',
@@ -118,23 +133,34 @@ const sendData = async () => {
     })
     reservResult.value = await response.json() // Capture response
     if (response.ok) {
-      if (reservResult.value.error){
+      if (!reservResult.value.error.error){
+        // Show success toast
+        toast.success(reservResult.value.message);
+        resetForm();
+        await router.push({name : 'Réservations'});
+
+      }else{
         // Show success toast
         toast.error(reservResult.value.message);
       }
-      // Show success toast
-      toast.success(reservResult.value.message);
-
       console.log('Data sent successfully:', reservResult.value)
     } else {
-
-
-      toast.success(reservResult.value.message);
+      toast.error(reservResult.value.message);
       console.error('Server error:', reservResult.value)
     }
   } catch (error) {
     console.error('Error sending data:', error)
   }
+}
+function resetForm() {
+  formData.value = {
+    email: '',
+    chambre_id: '',
+    date_deb:'',
+    date_fin:'',
+    nmb_per:'',
+    user_id:'',
+  }; // Reset each field to its initial value
 }
 onMounted(() => {
   fetchChambre();
@@ -153,11 +179,12 @@ onMounted(() => {
               <CFormInput
                 placeholder="Mail"
                 required
+                v-model="formData.email"
               />
             </div>
             <div class="col-6">
               <CFormLabel for="tarif_lab">Chambre Disponible</CFormLabel>
-              <CFormSelect aria-label="Default select ">
+              <CFormSelect aria-label="Default select " required v-model="formData.chambre_id">
                 <option>Selectionner</option>
                 <option
                   v-for="option in rooms.chambres"
@@ -172,8 +199,7 @@ onMounted(() => {
             <div class="col-6">
               <CFormLabel for="tarif_lab">Date d'arrivée</CFormLabel>
               <VueDatePicker
-                v-model="dateArr"
-                :range="{ noDisabledRange: true }"
+                v-model="formData.date_deb"
                 :disabled-dates="isDateDisabled"
                 :enable-time-picker="false"
                 required
@@ -182,11 +208,11 @@ onMounted(() => {
             <div class="col-6">
               <CFormLabel for="tarif_lab">Date de départ</CFormLabel>
               <VueDatePicker
-                v-model="dateDep"
-                :range="{ noDisabledRange: true }"
+                v-model="formData.date_fin"
                 :disabled-dates="isDateDepDisabled"
                 :enable-time-picker="false"
                 required
+
               />
             </div>
           </div>
@@ -197,6 +223,7 @@ onMounted(() => {
                 type="number"
                 min="1"
                 required
+                v-model="formData.nmb_per"
               />
             </div>
           </div>

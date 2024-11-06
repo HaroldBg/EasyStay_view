@@ -102,9 +102,8 @@ const apiUrlPic = 'http://127.0.0.1:8000/storage/';
         <div class="col-3 mt-3">
           <v-text-field
             v-model="search"
-            :loading="loading"
             label="Recherche"
-            placeholder="Rechercher Hôtel"
+            placeholder="Rechercher Réservation"
             append-inner-icon="mdi-magnify"
             outlined
             clearable
@@ -195,7 +194,43 @@ const apiUrlPic = 'http://127.0.0.1:8000/storage/';
               <font-awesome-icon :icon="['fas', 'right-from-bracket']" color="white"/>
             </CButton>
           </div>
+          <div v-if="item.status == 'Check-out'">
+            <CButton
+              size="sm"
+              color="primary"
+            >
+              <font-awesome-icon :icon="['fas', 'circle-info']" color="white"/>
+            </CButton>
+            <CButton
+              size="sm"
+              color="dark"
+            >
+              <font-awesome-icon :icon="['fas', 'file']" white/>
+            </CButton>
+          </div>
+          <div v-if="item.status == 'Confirmé'" >
+            <CButton
+              size="sm"
+              color="secondary"
+              class="mx-2"
+            >
+              <font-awesome-icon :icon="['fas', 'pen']" color="white"/>
+            </CButton>
+            <CButton
+              size="sm"
+              color="primary"
+            >
+              <font-awesome-icon :icon="['fas', 'circle-info']" color="white"/>
+            </CButton>
+            <CButton
+              size="sm"
+              color="success"
+              class="mx-2"
+            >
+              <font-awesome-icon :icon="['fas', 'right-to-bracket']" color="white" />
+            </CButton>
 
+          </div>
         </template>
       </v-data-table>
     </v-card>
