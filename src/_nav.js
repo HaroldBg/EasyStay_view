@@ -47,4 +47,10 @@ export default [
     to: '/parametre',
     icon: 'cil-settings',
   },
+  {
+    component: 'CNavItem',
+    name: 'Hotels',
+    to: '/hotels',
+    icon: 'cil-settings',
+  },
 ]

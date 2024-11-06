@@ -19,6 +19,13 @@ onMounted(() => {
     }
   })
 })
+
+const hotel = JSON.parse(localStorage.getItem('hotel'));
+if (hotel) {
+  console.log('Hotel :', hotel);
+} else {
+  console.log('No Hotel found');
+}
 </script>
 
 <template>
@@ -37,7 +44,7 @@ onMounted(() => {
 
       <CHeaderNav class="ms-auto " >
         <CNavItem class="fs-5 fw-bolder">
-          HOTEL NAME
+          {{ hotel.nom }}
         </CNavItem>
       </CHeaderNav>
 

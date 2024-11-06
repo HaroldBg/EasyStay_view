@@ -33,7 +33,7 @@ const mainCh = 300
 
 <template>
   <CRow :xs="{ gutter: 4 }">
-    <CCol :sm="6" :xl="4" :xxl="3">
+    <CCol :sm="6" :xl="3" :xxl="3">
       <CWidgetStatsA color="primary" style="height: 165px;">
         <template #value
           >{{ nmbCh }}
@@ -41,7 +41,7 @@ const mainCh = 300
         <template #title>Nombres de chambres</template>
       </CWidgetStatsA>
     </CCol>
-    <CCol :sm="6" :xl="4" :xxl="3">
+    <CCol :sm="6" :xl="3" :xxl="3">
       <CWidgetStatsA color="success" style="height: 165px;">
         <template #value
         >{{ disCh }}
@@ -49,7 +49,7 @@ const mainCh = 300
         <template #title>Chambres disponibles</template>
       </CWidgetStatsA>
     </CCol>
-    <CCol :sm="6" :xl="4" :xxl="3">
+    <CCol :sm="6" :xl="3" :xxl="3">
       <CWidgetStatsA color="warning" style="height: 165px;">
         <template #value
         >{{ occCh}}
@@ -57,7 +57,7 @@ const mainCh = 300
         <template #title>Chambres occupés</template>
       </CWidgetStatsA>
     </CCol>
-    <CCol :sm="6" :xl="4" :xxl="3">
+    <CCol :sm="6" :xl="3" :xxl="3">
       <CWidgetStatsA color="danger" style="height: 165px;">
         <template #value
         >{{ mainCh }}

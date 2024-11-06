@@ -9,6 +9,7 @@ const routes = [
     name: 'Home',
     component: DefaultLayout,
     redirect: '/dashboard',
+    meta: { requiresAuth: true },
     children: [
       {
         path: '/dashboard',
@@ -29,7 +30,19 @@ const routes = [
             return h(resolveComponent('router-view'))
           },
         },
-        redirect: '/chambre/chambres',
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (token && user && user.role === 'Admin') {
+          // Allow access if the user is an admin
+          next();
+        } else {
+          // Redirect to the Forbidden page or show a 403 error
+          next({ name: 'Forbidden' });
+        }
+      },
+        redirect: '/dashboard',
         children: [
           {
             path: '/chambre/chambres',
@@ -46,7 +59,7 @@ const routes = [
             component: () => import('@/views/chambre/reservation.vue'),
           },
           {
-            path: '/chambre/reservation/create',
+            path: '/reservation/create',
             name: 'Creer Réservations',
             component: () => import('@/views/chambre/CreateReservation.vue'),
           },
@@ -103,6 +116,17 @@ const routes = [
             /* webpackChunkName: "dashboard" */ '@/views/factures/Factures.vue'
             ),
       },
+      {
+        path: '/hotels',
+        name: 'Hôtels',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboard" */ '@/views/hotel/Hotels.vue'
+            ),
+      },
     ],
   },
   {
@@ -135,6 +159,11 @@ const routes = [
         name: 'Register',
         component: () => import('@/views/auth/Register'),
       },
+      {
+        path: '403',
+        name: 'Forbidden',
+        component: () => import('@/views/pages/Forbidden'),
+      },
     ],
   },
 ]
@@ -147,5 +176,16 @@ const router = createRouter({
     return { top: 0 }
   },
 })
+// Navigation guard to check authentication
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');// Replace with your store logic to track auth
 
+  // If the route requires authentication and the user is not logged in
+  if (to.meta.requiresAuth && !token) {
+    // Redirect to the auth view
+    next({ name: 'Login' });
+  } else {
+    next(); // Proceed to the requested route
+  }
+});
 export default router

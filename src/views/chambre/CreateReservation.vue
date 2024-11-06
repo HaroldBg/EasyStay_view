@@ -2,14 +2,27 @@
 
 import {CForm, CFormSelect} from "@coreui/vue/dist/esm/components/form";
 import {CCard} from "@coreui/vue/dist/esm/components/card";
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import { startOfDay, isBefore,addDays } from 'date-fns';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 const  room = {
   type:'',
   tarif:'',
   mat:'',
   client:'',
 }
+const formData = ref({
+  email: '',
+  chambre_id: '',
+  date_deb:'',
+  date_fin:'',
+  nmb_per:'',
+  user_id:'',
+});
+
+const reservResult = ref(null)
 const dateArr = ref();
 // Référence pour la date sélectionnée
 const selectedDate = ref(null);
@@ -71,39 +84,87 @@ const roomNumbers = [
   'CH-304',
   'CH-305'
 ];
+// let fetch Room
 
+const rooms = ref([]);
+async function fetchChambre() {
+  const token = localStorage.getItem('token'); // Assumes token is stored in localStorage
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/chambre/showAll', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Use the token for authorization
+        'Content-Type': 'application/json'
+      }
+    });
+    rooms.value = await response.json();
+    console.log(rooms.value);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+const sendData = async () => {
+
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/reservation/storeReserv', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData.value),
+    })
+    reservResult.value = await response.json() // Capture response
+    if (response.ok) {
+      if (reservResult.value.error){
+        // Show success toast
+        toast.error(reservResult.value.message);
+      }
+      // Show success toast
+      toast.success(reservResult.value.message);
+
+      console.log('Data sent successfully:', reservResult.value)
+    } else {
+
+
+      toast.success(reservResult.value.message);
+      console.error('Server error:', reservResult.value)
+    }
+  } catch (error) {
+    console.error('Error sending data:', error)
+  }
+}
+onMounted(() => {
+  fetchChambre();
+});
 </script>
 
 <template>
-
   <div class="d-flex flex-row align-items-center justify-content-center">
     <CCard class="col-7">
       <CCardHeader >Nouvelle réservation</CCardHeader>
       <CCardbody>
-        <CForm class="px-4 py-4">
+        <CForm @submit.prevent="sendData" class="px-4 py-4">
           <div class="row">
             <div class="col-6">
               <CFormLabel for="nmbCh">Client</CFormLabel>
-              <CFormSelect aria-label="Default select ">
-                <option>Selectionner</option>
-                <option
-                  v-for="option in clients"
-                  :value="option"
-                  :key="option"
-                  :selected="option === room.client"
-                >{{ option }}</option>
-              </CFormSelect>
+              <CFormInput
+                placeholder="Mail"
+                required
+              />
             </div>
             <div class="col-6">
               <CFormLabel for="tarif_lab">Chambre Disponible</CFormLabel>
               <CFormSelect aria-label="Default select ">
                 <option>Selectionner</option>
                 <option
-                  v-for="option in roomNumbers"
-                  :value="option"
-                  :key="option"
+                  v-for="option in rooms.chambres"
+                  :value="option.id"
+                  :key="option.num"
                   :selected="option === room.type"
-                >{{ option }}</option>
+                >{{ option.num }}</option>
               </CFormSelect>
             </div>
           </div>
@@ -114,6 +175,8 @@ const roomNumbers = [
                 v-model="dateArr"
                 :range="{ noDisabledRange: true }"
                 :disabled-dates="isDateDisabled"
+                :enable-time-picker="false"
+                required
               />
             </div>
             <div class="col-6">
@@ -122,6 +185,18 @@ const roomNumbers = [
                 v-model="dateDep"
                 :range="{ noDisabledRange: true }"
                 :disabled-dates="isDateDepDisabled"
+                :enable-time-picker="false"
+                required
+              />
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-6">
+              <CFormLabel for="tarif_lab">Voyageur(s)</CFormLabel>
+              <CFormInput
+                type="number"
+                min="1"
+                required
               />
             </div>
           </div>

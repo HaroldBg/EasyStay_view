@@ -1,3 +1,18 @@
+<script setup >
+// Access router instance
+import {useRouter} from "vue-router";
+import {onMounted} from "vue";
+
+const router = useRouter();
+// Redirect if the user is already authenticated
+onMounted(() => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    // Redirect to home page if token exists
+    router.push('/');
+  }
+});
+</script>
 <template>
   <div class="bwrapper min-vh-100 d-flex flex-row align-items-center">
     <CContainer>
@@ -45,5 +60,4 @@
     </CContainer>
   </div>
 </template>
-<script setup lang="ts">
-</script>
+
