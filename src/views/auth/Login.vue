@@ -31,14 +31,26 @@ const submitLogin = async () => {
 
      data.value = await response.json();
      console.log(data.value)
-    // Store the token in localStorage or cookies
-    localStorage.setItem('token', data.value.token);
-    localStorage.setItem('user', JSON.stringify(data.value.user) );
-    localStorage.setItem('hotel', JSON.stringify(data.value.hotel) );
-    // Redirect to the protected page or home page
-    await router.push('/dashboard') // Example of redirect
-    // Show success toast
-    toast.success(data.value.message);
+    if (response.ok){
+      if (!data.value.error.error){
+        // Store the token in localStorage or cookies
+        localStorage.setItem('token', data.value.token);
+        localStorage.setItem('user', JSON.stringify(data.value.user) );
+        localStorage.setItem('hotel', JSON.stringify(data.value.hotel) );
+        // Redirect to the protected page or home page
+        await router.push('/dashboard') // Example of redirect
+        // Show success toast
+        toast.success(data.value.message);
+
+      }else{
+        // Show success toast
+        toast.error(data.value.message);
+      }
+      console.log('Data sent successfully:', data.value)
+    } else {
+      toast.error(data.value.message);
+      console.error('Server error:', data.value)
+    }
   } catch (error) {
     errorMessage.value = error.message; // Show error to the user
   }
@@ -48,7 +60,7 @@ const submitLogin = async () => {
   <div class="wrapper min-vh-100 d-flex flex-row align-items-center">
     <CContainer>
       <CRow class="justify-content-center">
-        <CCol :md="5">
+        <CCol :md="5" :sm="8">
           <CCard class="p-4" >
             <CCardBody>
               <CForm @submit.prevent="submitLogin">

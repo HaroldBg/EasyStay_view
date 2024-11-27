@@ -44,10 +44,10 @@ const search = ref('');
 //define table headers
 const headers = [
 
-  { title: 'Nom', align: 'start', key: 'nom' },
-  { title: 'Prenom ', align: 'start', key: 'prenom' },
-  { title: 'Email ', align: 'start', key: 'email' },
-  { title: 'Statut', align: 'start', key: 'status' },
+  { title: 'Type', align: 'start', key: 'name' },
+  { title: 'Capacité ', align: 'start', key: 'capacity' },
+  { title: 'Caractéristique ', align: 'start', key: 'features' },
+  { title: 'Statut', align: 'start', key: 'statut' },
   { title: 'Actions', align: 'start', key: 'action', sortable: false, },
 ];
 // State to hold reservations data
@@ -56,7 +56,7 @@ async function fetchTypeChambre() {
   const token = localStorage.getItem('token'); // Assumes token is stored in localStorage
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/client', {
+    const response = await fetch('http://127.0.0.1:8000/api/chambre/type/show', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`, // Use the token for authorization
@@ -119,7 +119,7 @@ function resetForm() {
 // show room type Details
 const showType = async (id) =>{
   const token = localStorage.getItem('token');
-  const url = `http://127.0.0.1:8000/api/client/show/${id}`;
+  const url = `http://127.0.0.1:8000/api/chambre/type/show/${id}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -141,7 +141,7 @@ const showType = async (id) =>{
 const deleteType = async (id) =>{
   const token = localStorage.getItem('token');
   console.log(id);
-  const url = `http://127.0.0.1:8000/api/client/status/${id}`;
+  const url = `http://127.0.0.1:8000/api/chambre/type/delete/${id}`;
   console.log("URL générée :", url); // Vérifie l'URL dans la console
   try {
     const response = await fetch(url, {
@@ -182,13 +182,13 @@ const apiUrlPic = 'http://127.0.0.1:8000/storage/';
 // get status
 const getBadge = (status) => {
   switch (status) {
-    case 'Enable':
+    case 'Reservé':
       return 'success'
-    case 'Email Confirmation Pending':
+    case 'Disponible':
       return 'primary'
-    case 'Account Confirmation Pending':
+    case 'Occupé':
       return 'warning'
-    case 'Disable':
+    case 'Maintenance':
       return 'danger'
     default:
       'primary'
@@ -201,7 +201,7 @@ const getBadge = (status) => {
 <template>
   <div>
     <div class="w-100 d-flex flex-row-reverse align-items-end">
-      <CButton @click="() => { visibleVerticallyCenteredDemo = true }" class="btn btn-outline-dark mx-1">Créer Client</CButton>
+      <CButton @click="() => { visibleVerticallyCenteredDemo = true }" class="btn btn-outline-dark mx-1">Ajouter Type</CButton>
     </div>
 
     <CModal
@@ -211,7 +211,7 @@ const getBadge = (status) => {
       aria-labelledby="VerticallyCenteredExample"
     >
       <CModalHeader>
-        <CModalTitle id="VerticallyCenteredExample">Création client</CModalTitle>
+        <CModalTitle id="VerticallyCenteredExample">Ajouter Type de chambre</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CForm @submit.prevent="sendData" class="px-4 py-4">
@@ -264,24 +264,19 @@ const getBadge = (status) => {
       aria-labelledby="detailModalExample"
     >
       <CModalHeader>
-        <CModalTitle id="detailModalExample">Détails Client</CModalTitle>
+        <CModalTitle id="detailModalExample">Type de chambre</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <div class="mt-4 d-flex flex-column p-3" v-if="showTypeRoom">
-          <div class="clearfix">
-            <CImage align="center" style=" background-position: center; background-size: cover; " rounded :style="{ backgroundImage: `url(${apiUrlPic}/${showTypeRoom.client.picture})` }" width="200" height="200"/>
-          </div>
-          <p class="mt-3"><span class="fw-bold">Nom: </span> {{ showTypeRoom.client.nom }}</p>
-          <p><span class="fw-bold">Prenom: </span> {{ showTypeRoom.client.prenom }}</p>
-          <p><span class="fw-bold">E-mail: </span> {{ showTypeRoom.client.email }}</p>
-          <p><span class="fw-bold">Adresse: </span> {{ showTypeRoom.client.adresse }}</p>
-          <p><span class="fw-bold">Tél: </span> {{ showTypeRoom.client.tel }}</p>
+          <p><span class="fw-bold">Nom: </span> {{ showTypeRoom.typeRoom.name }}</p>
+          <p><span class="fw-bold">Capacité: </span> {{ showTypeRoom.typeRoom.capacity }}</p>
+          <p><span class="fw-bold">Caractéristique: </span> {{ showTypeRoom.typeRoom.features }}</p>
         </div>
       </CModalBody>
-      <CModalFooter class="mt-5">
-        <CButton color="secondary" @click="() => { detailsModal = false }">
-          Fermer
-        </CButton>
+        <CModalFooter class="mt-5">
+          <CButton color="secondary" @click="() => { detailsModal = false }">
+            Fermer
+          </CButton>
       </CModalFooter>
     </CModal>
 
@@ -305,28 +300,28 @@ const getBadge = (status) => {
           </div>
         </div>
         <v-data-table
-          :items="roomstype.client"
+          :items="roomstype.typeChambre"
           :headers="headers"
           :items-per-page="itemsPerPage"
           :search="search"
         >
-          <template #item.nom="{ item }">
+          <template #item.name="{ item }">
             <div class="text-dark fw-bold">
-              {{ item.nom }}
+              {{ item.name }}
             </div>
           </template>
-          <template #item.prenom="{ item }">
+          <template #item.capacity="{ item }">
             <div class="text-dark fw-bold">
-              {{ item.prenom }}
+              {{ item.capacity }}
             </div>
           </template>
 
-          <template #item.email="{ item }">
+          <template #item.features="{ item }">
             <div class="text-dark fw-bold">
-              {{  item.email }}
+              {{ item.features.length > 20 ? item.features.substring(0, 20) + "..." : item.features }}
             </div>
           </template>
-          <template #item.status="{ item }">
+          <template #item.statut="{ item }">
             <CBadge
               :color="getBadge(item.status)"
               style="font-size:14px;"
@@ -335,7 +330,7 @@ const getBadge = (status) => {
             </CBadge>
           </template>
           <template #item.action="{ item }">
-            <div v-if="item.status == 'Email Confirmation Pending'" >
+            <div v-if="item.status == 'Disponible'" >
               <CButton
                 size="sm"
                 color="secondary"
@@ -362,7 +357,7 @@ const getBadge = (status) => {
                 :id="item.id"
                 @click="() => deleteType(item.id)"
               >
-                <font-awesome-icon :icon="['fas', 'rotate']" />
+                <font-awesome-icon :icon="['fas', 'trash-can']" />
               </CButton>
             </div>
           </template>

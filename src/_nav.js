@@ -18,6 +18,11 @@ export default [
       },
       {
         component: 'CNavItem',
+        name: 'Types de chambre',
+        to: '/chambre/types',
+      },
+      {
+        component: 'CNavItem',
         name: 'Réservation',
         to: '/chambre/reservation',
       },
@@ -34,6 +39,11 @@ export default [
     name: 'Employés',
     to: '/employes',
     icon: 'cil-user',
+  },{
+    component: 'CNavItem',
+    name: 'Tarification',
+    to: '/tarification',
+    icon: 'cil-dollar',
   },
   {
     component: 'CNavItem',
@@ -45,12 +55,6 @@ export default [
     component: 'CNavItem',
     name: 'Paramètres',
     to: '/parametre',
-    icon: 'cil-settings',
-  },
-  {
-    component: 'CNavItem',
-    name: 'Hotels',
-    to: '/hotels',
     icon: 'cil-settings',
   },
 ]

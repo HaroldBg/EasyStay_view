@@ -8,6 +8,8 @@ import {CAvatar} from "@coreui/vue/dist/esm/components/avatar";
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {CButton} from "@coreui/vue/dist/esm/components/button";
+import {useToast} from "vue-toastification";
+const toast = useToast();
 
 // Original date string
 const dateString = '2025-06-24T00:00:00.000000Z';
@@ -81,12 +83,79 @@ const getBadge = (status) => {
   }
 }
 const apiUrlPic = 'http://127.0.0.1:8000/storage/';
+
+const checkInResult = ref(null)
+const checkIn = async (id) =>{
+  const token = localStorage.getItem('token');
+  console.log(id);
+  const url = `http://127.0.0.1:8000/api/reservation/checkin/${id}`;
+  console.log("URL générée :", url); // Vérifie l'URL dans la console
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    checkInResult.value = await response.json() // Capture response
+    if (response.ok) {
+      if (!checkInResult.value.error.error){
+        // Show success toast
+        toast.success(checkInResult.value.message);
+        await fetchReservations();
+
+      }else{
+        // Show success toast
+        toast.error(checkInResult.value.message);
+      }
+      console.log('Data sent successfully:', checkInResult.value)
+    } else {
+      toast.error(checkInResult.value.message);
+      console.error('Server error:', checkInResult.value)
+    }
+  } catch (error) {
+    console.error('Error sending data:', error)
+  }
+}
+
+const checkOutResult = ref(null)
+const checkOut = async (id) =>{
+  const token = localStorage.getItem('token');
+  console.log(id);
+  const url = `http://127.0.0.1:8000/api/reservation/checkout/${id}`;
+  console.log("URL générée :", url); // Vérifie l'URL dans la console
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    checkOutResult.value = await response.json() // Capture response
+    if (response.ok) {
+      if (!checkOutResult.value.error.error){
+        // Show success toast
+        toast.success(checkOutResult.value.message);
+        await fetchReservations();
+
+      }else{
+        // Show success toast
+        toast.error(checkOutResult.value.message);
+      }
+      console.log('Data sent successfully:', checkOutResult.value)
+    } else {
+      toast.error(checkOutResult.value.message);
+      console.error('Server error:', checkOutResult.value)
+    }
+  } catch (error) {
+    console.error('Error sending data:', error)
+  }
+}
 </script>
 
 <template>
-  <div>
-    <ReservationStats class="mb-4" />
-  </div>
   <div class="w-100 d-flex flex-row-reverse align-items-end">
     <router-link :to="{name: 'Creer Réservations'}" class="btn btn-dark  mx-1">Nouvelle Réservation</router-link>
 
@@ -175,6 +244,8 @@ const apiUrlPic = 'http://127.0.0.1:8000/storage/';
             size="sm"
             color="success"
             class="mx-2"
+            :id="item.id"
+            @click="() => checkIn(item.id)"
             >
               <font-awesome-icon :icon="['fas', 'right-to-bracket']" color="white" />
             </CButton>
@@ -183,21 +254,33 @@ const apiUrlPic = 'http://127.0.0.1:8000/storage/';
           <div v-if="item.status == 'Check-in'">
             <CButton
               size="sm"
+              color="secondary"
+              class="mx-2"
+            >
+              <font-awesome-icon :icon="['fas', 'pen']" color="white"/>
+            </CButton>
+            <CButton
+              size="sm"
               color="primary"
+              class="mx-2"
             >
               <font-awesome-icon :icon="['fas', 'circle-info']" color="white"/>
             </CButton>
             <CButton
               size="sm"
               color="danger"
+              :id="item.id"
+              @click="() => checkOut(item.id)"
             >
               <font-awesome-icon :icon="['fas', 'right-from-bracket']" color="white"/>
             </CButton>
           </div>
           <div v-if="item.status == 'Check-out'">
+
             <CButton
               size="sm"
               color="primary"
+              class="mx-2"
             >
               <font-awesome-icon :icon="['fas', 'circle-info']" color="white"/>
             </CButton>
@@ -205,10 +288,11 @@ const apiUrlPic = 'http://127.0.0.1:8000/storage/';
               size="sm"
               color="dark"
             >
-              <font-awesome-icon :icon="['fas', 'file']" white/>
+              <font-awesome-icon :icon="['fas', 'file']" color="white"/>
             </CButton>
           </div>
           <div v-if="item.status == 'Confirmé'" >
+
             <CButton
               size="sm"
               color="secondary"
@@ -226,6 +310,8 @@ const apiUrlPic = 'http://127.0.0.1:8000/storage/';
               size="sm"
               color="success"
               class="mx-2"
+              :id="item.id"
+              @click="() => checkIn(item.id)"
             >
               <font-awesome-icon :icon="['fas', 'right-to-bracket']" color="white" />
             </CButton>

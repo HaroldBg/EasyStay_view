@@ -63,6 +63,11 @@ const routes = [
             name: 'Creer Réservations',
             component: () => import('@/views/chambre/CreateReservation.vue'),
           },
+          {
+            path: '/chambre/types',
+            name: 'Types de chambres',
+            component: () => import('@/views/chambre/TypeChambre.vue'),
+          },
         ],
       },{
         path: '/clients',
@@ -125,6 +130,17 @@ const routes = [
         component: () =>
           import(
             /* webpackChunkName: "dashboard" */ '@/views/hotel/Hotels.vue'
+            ),
+      },
+      {
+        path: '/tarification',
+        name: 'Tarification',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboard" */ '@/views/tarification/Tarification.vue'
             ),
       },
     ],

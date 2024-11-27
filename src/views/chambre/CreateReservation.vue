@@ -138,7 +138,6 @@ const sendData = async () => {
         toast.success(reservResult.value.message);
         resetForm();
         await router.push({name : 'Réservations'});
-
       }else{
         // Show success toast
         toast.error(reservResult.value.message);
