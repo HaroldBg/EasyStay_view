@@ -56,7 +56,7 @@ async function fetchTypeChambre() {
   const token = localStorage.getItem('token'); // Assumes token is stored in localStorage
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/employee', {
+    const response = await fetch('http://127.0.0.1:8000/api/client', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`, // Use the token for authorization
@@ -70,15 +70,17 @@ async function fetchTypeChambre() {
   }
 }
 const formData = ref({
-  name: '',
-  capacity: '',
-  features:'',
+  nom: '',
+  prenom: '',
+  email:'',
+  adresse:'',
+  tel:'',
 });
 const sendData = async () => {
 
   const token = localStorage.getItem('token');
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/chambre/type/store', {
+    const response = await fetch('http://127.0.0.1:8000/api/auth/storeClientSec', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -111,15 +113,17 @@ const sendData = async () => {
 // reset form
 function resetForm() {
   formData.value = {
-    name: '',
-    capacity: '',
-    features:'',
+    nom: '',
+    prenom: '',
+    email:'',
+    adresse:'',
+    tel:'',
   }; // Reset each field to its initial value
 }
 // show room type Details
 const showType = async (id) =>{
   const token = localStorage.getItem('token');
-  const url = `http://127.0.0.1:8000/api/employee/show/${id}`;
+  const url = `http://127.0.0.1:8000/api/client/show/${id}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -141,7 +145,7 @@ const showType = async (id) =>{
 const deleteType = async (id) =>{
   const token = localStorage.getItem('token');
   console.log(id);
-  const url = `http://127.0.0.1:8000/api/employee/status/${id}`;
+  const url = `http://127.0.0.1:8000/api/client/status/${id}`;
   console.log("URL générée :", url); // Vérifie l'URL dans la console
   try {
     const response = await fetch(url, {
@@ -201,7 +205,7 @@ const getBadge = (status) => {
 <template>
   <div>
     <div class="w-100 d-flex flex-row-reverse align-items-end">
-      <CButton @click="() => { visibleVerticallyCenteredDemo = true }" class="btn btn-outline-dark mx-1">Créer Réceptionniste</CButton>
+      <CButton @click="() => { visibleVerticallyCenteredDemo = true }" class="btn btn-outline-dark mx-1">Créer Client</CButton>
     </div>
 
     <CModal
@@ -211,7 +215,7 @@ const getBadge = (status) => {
       aria-labelledby="VerticallyCenteredExample"
     >
       <CModalHeader>
-        <CModalTitle id="VerticallyCenteredExample">Création réceptioniste</CModalTitle>
+        <CModalTitle id="VerticallyCenteredExample">Création client</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CForm @submit.prevent="sendData" class="px-4 py-4">
@@ -221,30 +225,48 @@ const getBadge = (status) => {
               <CFormInput
                 placeholder=""
                 required
-                v-model="formData.name"
+                v-model="formData.nom"
+
               />
             </div>
             <div class="col-6">
-              <CFormLabel for="nmbCh">Capacité</CFormLabel>
+              <CFormLabel for="nmbCh">Prenom</CFormLabel>
               <CFormInput
                 placeholder=""
                 required
-                v-model="formData.capacity"
-                type="number"
-                min="1"
+                v-model="formData.prenom"
               />
             </div>
           </div>
-          <div class="row mt-3">
-            <div class="col">
-              <CFormTextarea
-                id="exampleFormControlTextarea1"
-                label="Caractéristiques"
-                rows="3"
+          <div class="row mt-2">
+            <div class="col-6">
+              <CFormLabel for="nmbCh">Mail</CFormLabel>
+              <CFormInput
+                placeholder=""
                 required
-                v-model="formData.features"
-              ></CFormTextarea>
+                v-model="formData.email"
+                type="email"
+              />
             </div>
+            <div class="col-6">
+              <CFormLabel for="nmbCh">Adresse</CFormLabel>
+              <CFormInput
+                placeholder=""
+                required
+                v-model="formData.adresse"
+              />
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-6">
+              <CFormLabel for="nmbCh">Tel</CFormLabel>
+              <CFormInput
+                placeholder=""
+                required
+                v-model="formData.tel"
+              />
+            </div>
+
           </div>
           <CModalFooter class="mt-5">
             <CButton color="primary" type="submit">Ajouter</CButton>
@@ -264,7 +286,7 @@ const getBadge = (status) => {
       aria-labelledby="detailModalExample"
     >
       <CModalHeader>
-        <CModalTitle id="detailModalExample">Détails Réceptionniste</CModalTitle>
+        <CModalTitle id="detailModalExample">Détails Client</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <div class="mt-4 d-flex flex-column p-3" v-if="showTypeRoom">
@@ -305,7 +327,7 @@ const getBadge = (status) => {
           </div>
         </div>
         <v-data-table
-          :items="roomstype.fda"
+          :items="roomstype.client"
           :headers="headers"
           :items-per-page="itemsPerPage"
           :search="search"

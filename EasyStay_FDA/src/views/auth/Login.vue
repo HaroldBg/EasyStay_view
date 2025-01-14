@@ -64,7 +64,7 @@ const submitLogin = async () => {
           <CCard class="p-4" >
             <CCardBody>
               <CForm @submit.prevent="submitLogin">
-                <h1>Connexion</h1>
+                <h1>Connection</h1>
                 <p class="text-body-secondary">Connectez-vous à votre compte</p>
                 <CInputGroup class="mb-3">
                   <CInputGroupText>@</CInputGroupText>

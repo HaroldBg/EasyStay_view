@@ -181,7 +181,7 @@ const checkOut = async (id) =>{
 
 <template>
   <div class="w-100 d-flex flex-row-reverse align-items-end">
-    <router-link :to="{name: 'Creer Réservations'}" class="btn btn-dark  mx-1">Nouvelle Réservation</router-link>
+    <router-link :to="{name: 'New Booking'}" class="btn btn-dark  mx-1">Nouvelle Réservation</router-link>
 
   </div>
 
